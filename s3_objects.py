@@ -11,7 +11,7 @@ for buckets in s3.buckets.all():
     print buckets
 
 if len(sys.argv) < 3:
-    print('Usage: add/remove object_name bucket_name')
+    print('Usage: add/remove/list object_name(blank for list) bucket_name')
     exit()
 elif len(sys.argv) == 4:
     action = sys.argv[1]
