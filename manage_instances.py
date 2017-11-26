@@ -18,16 +18,28 @@ if sys.argv[1] == 'list':
     
     print("")
     for item in response['Reservations']:
+
         for list in item['Instances']:
-            ec2_name = str(list['Tags'][0]['Value'])
+            
+            ec2_state = str(list['State']['Name'])
             ec2_id = str(list['InstanceId'])
+
+            if ec2_state == "terminated":
+                print("Instance %s has been terminated\n" 
+                      % ec2_id)
+                break
+            
             ec2_vpcid = str(list['VpcId'])
             ec2_privateip = str(list['PrivateIpAddress'])
             ec2_subnetid = str(list['SubnetId'])
-            ec2_state = str(list['State']['Name'])
             ec2_sc = str(list['SecurityGroups'][0]['GroupName'])
+            
+            try: ec2_name = str(list['Tags'][0]['Value'])
+            except: ec2_name = "No Tag Name Assigned"
+            
             try: ec2_pubip = str(list['PublicIpAddress'])
             except: ec2_pubip = str("Public IP Not Assigned")
+
 
             print('Node ' + str(count) + "\nName: " + ec2_name)
             print('Instance ID: ' + ec2_id)
