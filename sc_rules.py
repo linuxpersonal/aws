@@ -28,7 +28,9 @@ def sc_list(sc_id):
         response = ec2.describe_security_groups(GroupIds=[sc_id])
         for rules in response['SecurityGroups']:
             for i in rules['IpPermissions']:
-                print(i)
+                print("From Port: " + str(i['FromPort']) + "    To Port: "\
+                      + str(i['ToPort']) + "     Source "\
+                      + str(i['IpRanges'][0]['CidrIp']))
         print("")
     except Exception as e:
         print(e)
