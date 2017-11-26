@@ -43,15 +43,12 @@ def create(ec2_tagname):
 
 def terminate(ec2_terminate):
     
-    terminated = []
-    for i in ec2_terminate:
-        response = client.terminate_instances(
-                InstanceIds=[
-                    ec2_terminate
-                    ]
-                )
-        terminated.append(i)
-    return(i)
+    response = client.terminate_instances(
+            InstanceIds=[
+                ec2_terminate
+                ]
+            )
+    return(response)
 
 def main():
     
