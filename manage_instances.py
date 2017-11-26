@@ -12,19 +12,34 @@ ec2 = boto3.resource('ec2')
 client = boto3.client('ec2')
 response = client.describe_instances() 
 instance_id = False
+count = 1
 
 if sys.argv[1] == 'list':
     
-    for instance in ec2.instances.all():
-        for tag in instance.tags:
-            if tag['Key'] == 'Name':
-                print "\nInstance Name: " + tag['Value']
-
-        print "Instance ID: ", instance.id
-        print "Instance State: ", instance.state['Name']
-        print "Instance Code: ", instance.state['Code']
-
     print("")
+    for item in response['Reservations']:
+        for list in item['Instances']:
+            ec2_name = str(list['Tags'][0]['Value'])
+            ec2_id = str(list['InstanceId'])
+            ec2_vpcid = str(list['VpcId'])
+            ec2_privateip = str(list['PrivateIpAddress'])
+            ec2_subnetid = str(list['SubnetId'])
+            ec2_state = str(list['State']['Name'])
+            ec2_sc = str(list['SecurityGroups'][0]['GroupName'])
+            try: ec2_pubip = str(list['PublicIpAddress'])
+            except: ec2_pubip = str("Public IP Not Assigned")
+
+            print('Node ' + str(count) + "\nName: " + ec2_name)
+            print('Instace ID: ' + str(ec2_id))
+            print('Security Group: ' + str(ec2_sc))
+            print("State: " + str(ec2_state))
+            print("VPC: " + str(ec2_vpcid))
+            print("Subnet: " + str(ec2_subnetid))
+            print("Private IP: " + ec2_privateip)
+            print("Public IP: " + ec2_pubip)
+            print("")
+
+            count += 1
 
 else:
     for item in response['Reservations']:
