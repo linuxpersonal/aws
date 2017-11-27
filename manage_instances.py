@@ -8,11 +8,14 @@ ec2 = boto3.resource('ec2')
 client = boto3.client('ec2')
 response = client.describe_instances() 
 
+
 def parse_input():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-l', '--list',
                         help="List Instances", action="store_true")
+    parser.add_argument('-c', '--create', nargs=1,
+                        help="Insert Instance Name to create instance")
     parser.add_argument('-s', '--start', nargs=1,
                         help="Insert Instance Name/ID start instance")
     parser.add_argument('-d', '--stop', nargs=1,
@@ -82,6 +85,29 @@ def get_instance_id(instance_identifier):
 
     return(instance_id)
 
+def create(ec2_tagname):
+
+    ## Script variables for creating instances
+    instance_type = 't2.micro'
+    sc_group = 'aws-linxupersonal'
+    image_id = 'ami-1a668878'
+    keyname= 'aws-linuxpersonal'
+
+    instance = ec2.create_instances(
+        ImageId= image_id,
+        MinCount=1,
+        MaxCount=1,
+        InstanceType=instance_type,
+        KeyName=keyname,
+        SecurityGroups=[sc_group],
+        TagSpecifications=[
+            {
+            'ResourceType': 'instance',
+            'Tags': [ {'Key': 'Name', 'Value': ec2_tagname}, ]
+            },
+          ]
+        )
+
 def ec2_start(instance_identifier):
     
     instance_id = get_instance_id(instance_identifier)
@@ -125,6 +151,9 @@ def main():
 
     if arg.list:
         ec2_list()
+    elif arg.create:
+        ec2_tagname = arg.create[0]
+        ec2_create(ec2_tagname)
     elif arg.start:
         instance_identifier = arg.start[0]
         ec2_start(instance_identifier)
